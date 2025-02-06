@@ -2,7 +2,7 @@
 layout: default
 ---
 
-[Manual](./manual.html).
+[Manual](./manual.html)
 
 There should be whitespace between paragraphs.
 
