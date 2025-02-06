@@ -1,1 +1,0 @@
-# kanvor.github.io
