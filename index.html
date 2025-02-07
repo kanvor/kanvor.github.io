@@ -3,23 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja stránka</title>
+    <title>kanvor</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+    <nav>
+        <a href="?page=index.md">Domov</a> |
+        <a href="?page=poznámka.md">Poznámka</a>
+    </nav>
+
     <div id="content">Načítavam obsah...</div>
 
     <script>
-        fetch('index.md')
-        .then(response => response.text())
-        .then(text => {
-            // Nahradíme Obsidian odkazy [[text]] na [text](text.md)
-            text = text.replace(/\[\[(.*?)\]\]/g, "[$1]($1.md)");
+        function loadMarkdown(file) {
+            fetch(file)
+            .then(response => response.text())
+            .then(text => {
+                // Automatická konverzia Obsidian štýlu [[text]] na odkazy
+                text = text.replace(/\[\[(.*?)\]\]/g, "[$1](?page=$1.md)");
 
-            // Prevedieme Markdown na HTML
-            document.getElementById('content').innerHTML = marked.parse(text);
-        })
-        .catch(error => console.error("Chyba pri načítaní:", error));
+                // Vykreslenie Markdownu
+                document.getElementById('content').innerHTML = marked.parse(text);
+
+                // Automatická konverzia <a> odkazov
+                document.querySelectorAll("#content a").forEach(link => {
+                    if (link.getAttribute("href").endsWith(".md")) {
+                        link.href = "?page=" + link.getAttribute("href");
+                    }
+                });
+            })
+            .catch(error => console.error("Chyba pri načítaní:", error));
+        }
+
+        // Skontroluj URL a načítaj správny Markdown súbor
+        const params = new URLSearchParams(window.location.search);
+        const mdFile = params.get("page") || "index.md";
+        loadMarkdown(mdFile);
     </script>
 </body>
 </html>
