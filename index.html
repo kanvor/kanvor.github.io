@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
         a { color: #00aaff; text-decoration: none; }
         a:hover { text-decoration: underline; }
-        pre { background: #111; padding: 10px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
+        #content { background: #111; padding: 10px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
     </style>
 </head>
 <body>
@@ -22,18 +23,17 @@
             console.log("Načítavam súbor:", file); // Debug
             fetch(file)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP chyba: " + response.status);
-                }
+                if (!response.ok) throw new Error("HTTP chyba: " + response.status);
                 return response.text();
             })
             .then(text => {
                 console.log("Úspešne načítané:", text); // Debug
-                document.getElementById('content').innerHTML = `<pre>${text}</pre>`;
+                // Ak sa podarí načítať Markdown, renderuj ho ako HTML
+                document.getElementById('content').innerHTML = marked.parse(text);
             })
             .catch(error => {
                 console.error("Chyba pri načítaní:", error);
-                document.getElementById('content').innerHTML = "<p style='color: red;'>Nepodarilo sa načítať obsah.</p>";
+                document.getElementById('content').innerHTML = `<pre>${file} sa nepodarilo načítať.</pre>`;
             });
         }
 
