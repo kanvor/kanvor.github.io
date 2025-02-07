@@ -4,51 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+
+    <!-- Web komponent na zobrazenie Markdownu -->
+    <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
     <style>
         body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
         a { color: #00aaff; text-decoration: none; }
         a:hover { text-decoration: underline; }
-        #content { background: #111; padding: 10px; border-radius: 5px; overflow-x: auto; word-wrap: break-word; }
     </style>
 </head>
 <body>
-    <div id="content">Načítavam obsah...</div>
+    <nav>
+        <a href="index.html?page=index.md">Domov</a>
+    </nav>
+
+    <!-- Tu sa zobrazí Markdown -->
+    <zero-md id="markdown-content" src="index.md"></zero-md>
 
     <script>
-        function loadMarkdown(file) {
-            console.log("Načítavam súbor:", file);
-
-            fetch(file, { cache: "no-cache" })  
-            .then(response => {
-                if (!response.ok) throw new Error("HTTP chyba: " + response.status);
-                return response.text();
-            })
-            .then(text => {
-                console.log("Úspešne načítané:", text);
-                
-                // Konverzia [[Obsidian odkazy]] na normálne odkazy
-                text = text.replace(/\[\[(.*?)\]\]/g, '<a href="$1.md">$1</a>');
-
-                // Markdown do HTML
-                document.getElementById('content').innerHTML = marked.parse(text);
-            })
-            .catch(error => {
-                console.error("Chyba pri načítaní:", error);
-                document.getElementById('content').innerHTML = `<pre>❌ Súbor '${file}' sa nepodarilo načítať.</pre>`;
-            });
-        }
-
-        // Načíta správny súbor podľa URL
+        // Prečíta parameter "page" z URL a načíta správny Markdown súbor
         const params = new URLSearchParams(window.location.search);
         let mdFile = params.get("page") || "index.md";
-
-        // Ak ide o iný MD súbor než index.md, otvorí ho v čistom texte
-        if (mdFile !== "index.md") {
-            window.location.href = mdFile;  
-        } else {
-            loadMarkdown(mdFile);  // Ak je to index.md, zobrazí ho pekne na stránke
-        }
+        document.getElementById("markdown-content").setAttribute("src", mdFile);
     </script>
 </body>
 </html>
