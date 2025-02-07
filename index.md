@@ -1,6 +1,5 @@
-# Moja stránka
-Vitaj na mojej wiki! Klikni na [[poznámky]] alebo [[2024-02-07 zápis]].
-
-## Ďalšie odkazy
-- [[dokument]]
-- [[moje-plány]]
+[[poznámka]]
+[[Me+AI]]
+[[2024-02-07 zápis]]
+[[2016-08-05 1]]
+[[2016-08-05]]
