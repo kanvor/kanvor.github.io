@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
-
-    <!-- Web komponent na zobrazenie Markdownu -->
-    <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
 
     <style>
         body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
@@ -16,8 +14,12 @@
     </style>
 </head>
 <body>
-    <!-- Markdown sa zobrazí tu -->
-    <zero-md id="markdown-content" src="index.md"></zero-md>
+
+    <nav>
+        <a href="index.html?page=index.md">Domov</a>
+    </nav>
+
+    <div id="content">Načítavam obsah...</div>
 
     <script>
         function convertObsidianLinks(text) {
@@ -28,16 +30,27 @@
 
         function loadMarkdown(file) {
             fetch(file)
-                .then(response => response.text())
-                .then(text => {
-                    document.getElementById("markdown-content").innerHTML = convertObsidianLinks(text);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`${file} sa nepodarilo načítať`);
+                    }
+                    return response.text();
                 })
-                .catch(error => console.error("Chyba pri načítaní:", error));
+                .then(text => {
+                    text = convertObsidianLinks(text); // Nahradíme Obsidian odkazy
+                    document.getElementById("content").innerHTML = marked.parse(text);
+                })
+                .catch(error => {
+                    console.error("Chyba pri načítaní:", error);
+                    document.getElementById("content").innerHTML = `<p style="color: red;">Chyba pri načítaní súboru.</p>`;
+                });
         }
 
+        // Zistí, ktoré .md načítať podľa URL
         const params = new URLSearchParams(window.location.search);
         const mdFile = params.get("page") || "index.md";
         loadMarkdown(mdFile);
     </script>
+
 </body>
 </html>
