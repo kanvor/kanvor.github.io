@@ -13,35 +13,42 @@
     </style>
 </head>
 <body>
-   
+    <nav>
+        <a href="?page=index.md">Domov</a>
+    </nav>
     <div id="content">Načítavam obsah...</div>
 
     <script>
         function loadMarkdown(file) {
-            console.log("Načítavam súbor:", file); // Debug
-            fetch(file)
+            console.log("Načítavam súbor:", file);
+
+            fetch(file, { cache: "no-cache" })  // Vypne cache, aby vždy načítalo aktuálnu verziu
             .then(response => {
                 if (!response.ok) throw new Error("HTTP chyba: " + response.status);
                 return response.text();
             })
             .then(text => {
-                console.log("Úspešne načítané:", text); // Debug
-                // Ak sa podarí načítať Markdown, renderuj ho ako HTML
+                console.log("Úspešne načítané:", text);
                 document.getElementById('content').innerHTML = marked.parse(text);
             })
             .catch(error => {
                 console.error("Chyba pri načítaní:", error);
-                document.getElementById('content').innerHTML = `<pre>${file} sa nepodarilo načítať.</pre>`;
+                document.getElementById('content').innerHTML = `<pre>❌ Súbor '${file}' sa nepodarilo načítať.</pre>`;
             });
         }
 
-        // Načíta aktuálny .md súbor zo URL parametra ?page=
+        // Skontroluj URL a načítaj správny Markdown súbor
         const params = new URLSearchParams(window.location.search);
         let mdFile = params.get("page") || "index.md";
 
-        // Ošetrenie, aby URL neobsahovala dvakrát "?page="
+        // Ošetrenie, aby URL neobsahovala duplicitné "?page="
         if (mdFile.includes("?page=")) {
             mdFile = mdFile.split("?page=")[1];
+        }
+
+        // Zabezpečenie správnej cesty k súboru
+        if (!mdFile.endsWith(".md")) {
+            mdFile += ".md";
         }
 
         loadMarkdown(mdFile);
