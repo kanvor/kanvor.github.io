@@ -1,4 +1,3 @@
 .obsidian/  # Nastavenia Obsidianu
 .DS_Store   # macOS systémové súbory
 *.excalidraw # Excalidraw kresby
-.DS_Store
