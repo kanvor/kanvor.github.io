@@ -1,34 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsidian Wiki</title>
+    <title>Moja stránka</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
 </head>
 <body>
-    <div id="content">Loading...</div>
+    <div id="content">Načítavam obsah...</div>
 
     <script>
-        function loadMarkdown(file) {
-            console.log("Načítavam súbor:", file); // Debug log
-            fetch('https://kanvor.github.io/index.md')  // Skús absolútnu URL
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("HTTP error! Status: " + response.status);
-                }
-                return response.text();
-            })
-            .then(text => {
-                console.log("Súbor úspešne načítaný");
-                document.getElementById('content').innerHTML = marked.parse(text);
-            })
-            .catch(error => {
-                console.error("Chyba pri načítaní Markdownu:", error);
-                document.getElementById('content').innerHTML = "<p>Chyba pri načítaní obsahu.</p>";
-            });
-        }
-        loadMarkdown('index.md');
+        fetch('index.md')
+        .then(response => response.text())
+        .then(text => {
+            // Nahradíme Obsidian odkazy [[text]] na [text](text.md)
+            text = text.replace(/\[\[(.*?)\]\]/g, "[$1]($1.md)");
+            
+            // Prevedieme Markdown na HTML
+            document.getElementById('content').innerHTML = marked.parse(text);
+        })
+        .catch(error => console.error("Chyba pri načítaní:", error));
     </script>
 </body>
 </html>
