@@ -8,18 +8,21 @@
 </head>
 <body>
     <div id="content">Načítavam obsah...</div>
+
     <script>
         function loadMarkdown(file) {
             fetch(file)
             .then(response => response.text())
             .then(text => {
-                // Opravená konverzia Obsidian štýlu [[text]] na klikateľné odkazy
-                text = text.replace(/\[\[(.*?)\]\]/g, "[$1](?page=" + encodeURIComponent("$1.md") + ")");
+                // Oprava konverzie Obsidian [[text]] odkazov na klikateľné odkazy
+                text = text.replace(/\[\[(.*?)\]\]/g, function(match, p1) {
+                    return `<a href="?page=${encodeURIComponent(p1)}.md">${p1}</a>`;
+                });
 
                 // Vykreslenie Markdownu
                 document.getElementById('content').innerHTML = marked.parse(text);
 
-                // Opravená konverzia <a> odkazov (zabránime duplikovaniu ?page=)
+                // Oprava <a> odkazov v Markdown obsahu
                 document.querySelectorAll("#content a").forEach(link => {
                     let href = link.getAttribute("href");
                     if (href.endsWith(".md") && !href.includes("?page=")) {
@@ -34,7 +37,7 @@
         const params = new URLSearchParams(window.location.search);
         let mdFile = params.get("page") || "index.md";
 
-        // Opravené dekódovanie URL, ak bolo už raz enkódované
+        // Opravené dekódovanie URL
         mdFile = decodeURIComponent(mdFile);
 
         loadMarkdown(mdFile);
