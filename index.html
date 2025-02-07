@@ -20,14 +20,28 @@
         <a href="index.html?page=index.md">Domov</a>
     </nav>
 
-    <!-- Tu sa zobrazí Markdown -->
+    <!-- Markdown sa zobrazí tu -->
     <zero-md id="markdown-content" src="index.md"></zero-md>
 
     <script>
-        // Prečíta parameter "page" z URL a načíta správny Markdown súbor
+        function convertObsidianLinks(text) {
+            return text.replace(/\[\[(.*?)\]\]/g, function(match, p1) {
+                return `<a href="?page=${encodeURIComponent(p1)}.md">${p1}</a>`;
+            });
+        }
+
+        function loadMarkdown(file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(text => {
+                    document.getElementById("markdown-content").innerHTML = convertObsidianLinks(text);
+                })
+                .catch(error => console.error("Chyba pri načítaní:", error));
+        }
+
         const params = new URLSearchParams(window.location.search);
-        let mdFile = params.get("page") || "index.md";
-        document.getElementById("markdown-content").setAttribute("src", mdFile);
+        const mdFile = params.get("page") || "index.md";
+        loadMarkdown(mdFile);
     </script>
 </body>
 </html>
