@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div id="content">Načítavam obsah...</div>
@@ -15,7 +15,7 @@
         .then(text => {
             // Nahradíme Obsidian odkazy [[text]] na [text](text.md)
             text = text.replace(/\[\[(.*?)\]\]/g, "[$1]($1.md)");
-            
+
             // Prevedieme Markdown na HTML
             document.getElementById('content').innerHTML = marked.parse(text);
         })
