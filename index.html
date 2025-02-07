@@ -4,21 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
+        a { color: #00aaff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        pre { background: #111; padding: 10px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
 </head>
 <body>
+    <nav>
+        <a href="?page=index.md">Domov</a>
+    </nav>
     <div id="content">Načítavam obsah...</div>
-    <script>
-        fetch('index.md')
-        .then(response => response.text())
-        .then(text => {
-            // Nahradíme Obsidian odkazy [[text]] na [text](text.md)
-            text = text.replace(/\[\[(.*?)\]\]/g, "[$1]($1.md)");
 
-            // Prevedieme Markdown na HTML
-            document.getElementById('content').innerHTML = marked.parse(text);
-        })
-        .catch(error => console.error("Chyba pri načítaní:", error));
+    <script>
+        function loadMarkdown(file) {
+            console.log("Načítavam súbor:", file); // Debug
+            fetch(file)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP chyba: " + response.status);
+                }
+                return response.text();
+            })
+            .then(text => {
+                console.log("Úspešne načítané:", text); // Debug
+                document.getElementById('content').innerHTML = `<pre>${text}</pre>`;
+            })
+            .catch(error => {
+                console.error("Chyba pri načítaní:", error);
+                document.getElementById('content').innerHTML = "<p style='color: red;'>Nepodarilo sa načítať obsah.</p>";
+            });
+        }
+
+        // Načíta aktuálny .md súbor zo URL parametra ?page=
+        const params = new URLSearchParams(window.location.search);
+        let mdFile = params.get("page") || "index.md";
+
+        // Ošetrenie, aby URL neobsahovala dvakrát "?page="
+        if (mdFile.includes("?page=")) {
+            mdFile = mdFile.split("?page=")[1];
+        }
+
+        loadMarkdown(mdFile);
     </script>
 </body>
 </html>
