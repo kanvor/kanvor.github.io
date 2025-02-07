@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.6.0-beta1/markdown.min.js"></script>
 
     <style>
         body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
@@ -38,7 +38,7 @@
                 })
                 .then(text => {
                     text = convertObsidianLinks(text); // Nahradíme Obsidian odkazy
-                    document.getElementById("content").innerHTML = marked.parse(text);
+                    document.getElementById("content").innerHTML = markdown.toHTML(text);
                 })
                 .catch(error => {
                     console.error("Chyba pri načítaní:", error);
