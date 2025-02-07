@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kanvor</title>
+    <title>Obsidian Wiki</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
 </head>
 <body>
@@ -11,25 +11,24 @@
 
     <script>
         function loadMarkdown(file) {
-            fetch(file)
-            .then(response => response.text())
+            console.log("Načítavam súbor:", file); // Debug log
+            fetch('https://kanvor.github.io/index.md')  // Skús absolútnu URL
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP error! Status: " + response.status);
+                }
+                return response.text();
+            })
             .then(text => {
-                // Nahradí wikilinky [[xyz]] → [xyz](xyz.md)
-                text = text.replace(/\[\[(.*?)\]\]/g, '[$1]($1.md)');
+                console.log("Súbor úspešne načítaný");
                 document.getElementById('content').innerHTML = marked.parse(text);
+            })
+            .catch(error => {
+                console.error("Chyba pri načítaní Markdownu:", error);
+                document.getElementById('content').innerHTML = "<p>Chyba pri načítaní obsahu.</p>";
             });
         }
-
-        // Načíta hlavný súbor index.md
-        loadMarkdown('./index.md');
-
-        // Dynamické spracovanie všetkých odkazov na .md
-        document.addEventListener("click", function(e) {
-            if (e.target.tagName === "A" && e.target.href.endsWith(".md")) {
-                e.preventDefault();
-                loadMarkdown(e.target.getAttribute("href"));
-            }
-        });
+        loadMarkdown('index.md');
     </script>
 </body>
 </html>
