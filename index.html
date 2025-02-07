@@ -7,14 +7,22 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+    <nav>
+        <a href="?page=index">Domov</a>
+    </nav>
     <div id="content">Načítavam obsah...</div>
 
     <script>
         function loadMarkdown(file) {
-            fetch(file)
-            .then(response => response.text())
+            fetch(file, { headers: { "Accept": "text/plain" } }) // Pokus o obídenie MIME problému
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Chyba pri načítaní súboru.");
+                }
+                return response.text();
+            })
             .then(text => {
-                // Oprava pre Obsidian [[text]] odkazy
+                // Oprava pre [[text]] odkazy
                 text = text.replace(/\[\[(.*?)\]\]/g, function(match, p1) {
                     return `<a href="?page=${encodeURIComponent(p1)}">${p1}</a>`;
                 });
@@ -22,14 +30,16 @@
                 // Vykreslenie Markdown obsahu
                 document.getElementById('content').innerHTML = marked.parse(text);
             })
-            .catch(error => console.error("Chyba pri načítaní:", error));
+            .catch(error => {
+                console.error("Chyba pri načítaní:", error);
+                document.getElementById('content').innerHTML = "<p style='color: red;'>Nepodarilo sa načítať obsah.</p>";
+            });
         }
 
         // Skontroluj URL a načítaj správny Markdown súbor
         const params = new URLSearchParams(window.location.search);
         let mdFile = params.get("page") || "index";
-        
-        // Pridanie prípony ".md" iba ak tam nie je
+
         if (!mdFile.endsWith(".md")) {
             mdFile += ".md";
         }
