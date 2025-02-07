@@ -4,35 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
-        a { color: #00aaff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        pre { background: #111; padding: 10px; border-radius: 5px; overflow-x: auto; }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    
     <div id="content">Načítavam obsah...</div>
 
     <script>
-        function loadMarkdown(file) {
-            fetch(file)
-            .then(response => response.text())
-            .then(text => {
-                // Vykresli Markdown ako plain text v <pre>
-                document.getElementById('content').innerHTML = `<pre>${text}</pre>`;
-            })
-            .catch(error => {
-                console.error("Chyba pri načítaní:", error);
-                document.getElementById('content').innerHTML = "<p style='color: red;'>Nepodarilo sa načítať obsah.</p>";
-            });
-        }
+        fetch('index.md')
+        .then(response => response.text())
+        .then(text => {
+            // Nahradíme Obsidian odkazy [[text]] na [text](text.md)
+            text = text.replace(/\[\[(.*?)\]\]/g, "[$1]($1.md)");
 
-        // Načíta aktuálny .md súbor zo URL parametra ?page=
-        const params = new URLSearchParams(window.location.search);
-        const mdFile = params.get("page") || "index.md";
-        loadMarkdown(mdFile);
+            // Prevedieme Markdown na HTML
+            document.getElementById('content').innerHTML = marked.parse(text);
+        })
+        .catch(error => console.error("Chyba pri načítaní:", error));
     </script>
 </body>
 </html>
