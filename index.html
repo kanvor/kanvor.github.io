@@ -4,28 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja stránka</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: black; color: white; padding: 20px; }
+        a { color: #00aaff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        pre { background: #111; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
 </head>
 <body>
     <nav>
-        <a href="?page=index">Domov</a>
+        <a href="?page=index.md">Domov</a>
     </nav>
     <div id="content">Načítavam obsah...</div>
 
     <script>
         function loadMarkdown(file) {
-            const repo = "kanvor/kanvor.github.io";  // Uprav na správny názov repo
-            const branch = "main";  // Alebo "master"
-            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${file}`;
-
-            fetch(rawUrl)
-            .then(response => {
-                if (!response.ok) throw new Error("Chyba pri načítaní súboru.");
-                return response.text();
-            })
+            fetch(file)
+            .then(response => response.text())
             .then(text => {
-                text = text.replace(/\[\[(.*?)\]\]/g, (_, p1) => `<a href="?page=${encodeURIComponent(p1)}">${p1}</a>`);
-                document.getElementById('content').innerHTML = marked.parse(text);
+                // Vykresli Markdown ako plain text v <pre>
+                document.getElementById('content').innerHTML = `<pre>${text}</pre>`;
             })
             .catch(error => {
                 console.error("Chyba pri načítaní:", error);
@@ -33,10 +31,9 @@
             });
         }
 
+        // Načíta aktuálny .md súbor zo URL parametra ?page=
         const params = new URLSearchParams(window.location.search);
-        let mdFile = params.get("page") || "index";
-        if (!mdFile.endsWith(".md")) mdFile += ".md";
-
+        const mdFile = params.get("page") || "index.md";
         loadMarkdown(mdFile);
     </script>
 </body>
