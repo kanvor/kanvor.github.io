@@ -14,20 +14,17 @@
 
     <script>
         function loadMarkdown(file) {
-            fetch(file, { headers: { "Accept": "text/plain" } }) // Pokus o obídenie MIME problému
+            const repo = "kanvor/kanvor.github.io";  // Uprav na správny názov repo
+            const branch = "main";  // Alebo "master"
+            const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${file}`;
+
+            fetch(rawUrl)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Chyba pri načítaní súboru.");
-                }
+                if (!response.ok) throw new Error("Chyba pri načítaní súboru.");
                 return response.text();
             })
             .then(text => {
-                // Oprava pre [[text]] odkazy
-                text = text.replace(/\[\[(.*?)\]\]/g, function(match, p1) {
-                    return `<a href="?page=${encodeURIComponent(p1)}">${p1}</a>`;
-                });
-
-                // Vykreslenie Markdown obsahu
+                text = text.replace(/\[\[(.*?)\]\]/g, (_, p1) => `<a href="?page=${encodeURIComponent(p1)}">${p1}</a>`);
                 document.getElementById('content').innerHTML = marked.parse(text);
             })
             .catch(error => {
@@ -36,13 +33,9 @@
             });
         }
 
-        // Skontroluj URL a načítaj správny Markdown súbor
         const params = new URLSearchParams(window.location.search);
         let mdFile = params.get("page") || "index";
-
-        if (!mdFile.endsWith(".md")) {
-            mdFile += ".md";
-        }
+        if (!mdFile.endsWith(".md")) mdFile += ".md";
 
         loadMarkdown(mdFile);
     </script>
