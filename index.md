@@ -1,9 +1,6 @@
----
-layout: default
-title: Domov
----
-# Vitajte na mojom webe
+# Vitajte na mojom webe!
 
-Toto je ukážkový obsah.
+Toto je obsah domovskej stránky.
 
 - [O mne](about.md)
+- [Kontakt](contact.md)
