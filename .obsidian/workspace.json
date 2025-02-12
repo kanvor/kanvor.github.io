@@ -103,7 +103,8 @@
               "title": "Záložky"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -179,6 +180,16 @@
               "icon": "lucide-list",
               "title": "Přehled start"
             }
+          },
+          {
+            "id": "2782ff43feadea71",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {},
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
+            }
           }
         ]
       }
@@ -194,7 +205,9 @@
       "canvas:Vytvořit nový canvas": false,
       "daily-notes:Otevřít dnešní poznámku": false,
       "templates:Vložit šablonu": false,
-      "command-palette:Otevřít paletu příkazů": false
+      "command-palette:Otevřít paletu příkazů": false,
+      "obsidian-kanban:Create new board": false,
+      "obsidian-git:Open Git source control": false
     }
   },
   "active": "61a8bf4554c98894",
